@@ -1,15 +1,22 @@
-const title = 'React'
+//page 33
+
+function getTitle (title) {
+	return title;
+}
+
+
 
 function App() {
-// you can do something in between
-
-
-	
 return (
 <div>
-<h1>Hello {title} </h1>
+<h1>Hello {getTitle('React')}</h1>
+
+<label htmlFor="search">Search: </label>
+<input id="search" type="text" />
 </div>
 );
 }
-export default App;
 
+
+
+export default App;
