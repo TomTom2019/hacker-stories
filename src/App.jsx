@@ -1,6 +1,7 @@
 
 
 const App = () => {
+
   const stories = [
     {
       title: 'React',
@@ -33,14 +34,13 @@ const App = () => {
 
 }
  
-
 const Search = () => {
   const handleChange = (event) => {
     // synthetic event
     console.log(event);
     // value of target (here: input HTML element)
     console.log(event.target.value);
-  };
+}
 
   return (
     <div>
