@@ -1,5 +1,6 @@
 import * as React from 'react';
-/////React Fragments
+
+/////Imperative React
 
 const useStorageState = (key,initialState) => {
   const [value, setValue] = React.useState(
@@ -56,24 +57,52 @@ const App = () => {
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  return (
+   return (
     <div>
       <h1>My Hacker Stories</h1>
 
-      <Search search={searchTerm} onSearch={handleSearch} />
-
-      <hr />
+      <InputWithLabel
+        id="search"
+        label="Search"
+        value={searchTerm}
+        onInputChange={handleSearch}
+    >
+ 
+     <h1>HELLO</h1>
+     <strong>search:</strong> 
+          </InputWithLabel>
+      
 
       <List list={searchedStories} />
     </div>
   );
 };
 
+const InputWithLabel = ({
+  id,
+  label,
+  value,
+  type = 'text',
+  onInputChange,
+  children,
+}) => (
+  <>
+    <label htmlFor={id}>{children}</label>
+    &nbsp;
+    <input
+      id={id}
+      type={type}
+      value={value}
+      onChange={onInputChange}
+    />
+  </>
+);
+
 
 //////////////
  const Search = ({search,onSearch})=>(
 
-    <div>
+    <>
       <label htmlFor="search">Search: </label>
       <input
         id="search"
@@ -81,7 +110,7 @@ const App = () => {
         value={search}
         onChange={onSearch}
       />
-    </div>
+    </>
   );
 
 
