@@ -1,4 +1,5 @@
-import * as React from 'react';
+import * as React from 'react'
+
 
   const initialStories = [
 
@@ -20,6 +21,18 @@ import * as React from 'react';
     },
   ];
 
+////
+const getAsyncStories = () =>
+  new Promise((resolve) =>
+    setTimeout(
+      () => resolve({ data: { stories: initialStories } }),
+      2000
+    )
+  );
+
+
+
+
 const useStorageState = (key,initialState) => {
   const [value, setValue] = React.useState(
     localStorage.getItem('key') || initialState
@@ -40,7 +53,13 @@ const [searchTerm,setSearchTerm]= useStorageState(
      'React'
 
   );
-  const [stories, setStories] = React.useState(initialStories)
+  const [stories, setStories] = React.useState([])
+
+  React.useEffect(()=>{
+    getAsyncStories().then(result =>{
+      setStories(result.data.stories)
+    })
+  },[])
 
  const handleRemoveStory = (item)=>{
   const newsStories = stories.filter(
