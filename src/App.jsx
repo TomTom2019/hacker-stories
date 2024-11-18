@@ -1,25 +1,25 @@
 import * as React from 'react'
 
 
-  const initialStories = [
+const initialStories = [
 
-      {
-      title: 'React',
-      url: 'https://reactjs.org/',
-      author: 'Jordan Walke',
-      num_comments: 3,
-      points: 4,
-      objectID: 0,
-    },
-    {
-      title: 'Redux',
-      url: 'https://redux.js.org/',
-      author: 'Dan Abramov, Andrew Clark',
-      num_comments: 2,
-      points: 5,
-      objectID: 1,
-    },
-  ];
+  {
+    title: 'React',
+    url: 'https://reactjs.org/',
+    author: 'Jordan Walke',
+    num_comments: 3,
+    points: 4,
+    objectID: 0,
+  },
+  {
+    title: 'Redux',
+    url: 'https://redux.js.org/',
+    author: 'Dan Abramov, Andrew Clark',
+    num_comments: 2,
+    points: 5,
+    objectID: 1,
+  },
+];
 
 ////
 const getAsyncStories = () =>
@@ -30,10 +30,21 @@ const getAsyncStories = () =>
     )
   );
 
+const storiesReducer = (state, action) => {
+  switch (action.type) {
+    case 'SET_STORIES':
+      return action.payload;
+    case 'REMOVE_STORY':
+      return state.filter(
+        (story) => action.payload.objectID !== story.objectID
+      );
+    default:
+      throw new Error();
+ 
+  }
+};
 
-
-
-const useStorageState = (key,initialState) => {
+const useStorageState = (key, initialState) => {
   const [value, setValue] = React.useState(
     localStorage.getItem('key') || initialState
   );
@@ -41,33 +52,50 @@ const useStorageState = (key,initialState) => {
 
   React.useEffect(() => {
     localStorage.setItem(key, value);
-  }, [value,key]);
+  }, [value, key]);
 
-  return [value,setValue]
+  return [value, setValue]
 };
 
 //////////
 const App = () => {
-const [searchTerm,setSearchTerm]= useStorageState(
-     'search',
-     'React'
+  const [searchTerm, setSearchTerm] = useStorageState(
+    'search',
+    'React'
 
   );
-  const [stories, setStories] = React.useState([])
+  
+  const [stories, dispatchStories] = React.useReducer(
+    storiesReducer,
+    []
+  );
 
-  React.useEffect(()=>{
-    getAsyncStories().then(result =>{
-      setStories(result.data.stories)
-    })
-  },[])
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
 
- const handleRemoveStory = (item)=>{
-  const newsStories = stories.filter(
-    (story) => item.objectID !== story.objectID
-    );
+  React.useEffect(() => {
+    setIsLoading(true);
 
-  setStories(newsStories)
- }
+    getAsyncStories()
+      .then((result) => {
+        dispatchStories({
+          type: 'SET_STORIES',
+          payload: result.data.stories
+        })
+        setIsLoading(false);
+      })
+      .catch(() => setIsError(true));
+  }, []);
+  
+
+  const handleRemoveStory = (item) => {
+    dispatchStories({
+      type: 'REMOVE_STORY',
+      payload: item,
+    });
+
+  };
+
 
 
   const handleSearch = (event) => {
@@ -78,7 +106,7 @@ const [searchTerm,setSearchTerm]= useStorageState(
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-   return (
+  return (
     <div>
       <h1>My Hacker Stories</h1>
 
@@ -88,12 +116,12 @@ const [searchTerm,setSearchTerm]= useStorageState(
         value={searchTerm}
         isFocused
         onInputChange={handleSearch}
-    >
+      >
  
-     <h1>HELLO</h1>
-     <strong>search:</strong> 
-          </InputWithLabel>
-      <hr/>
+        <h1>HELLO</h1>
+        <strong>search:</strong> 
+      </InputWithLabel>
+      <hr />
 
      
       <List list={searchedStories} onRemoveItem={handleRemoveStory} />
@@ -138,28 +166,28 @@ const InputWithLabel = ({
 
 
 //////////////
- const Search = ({search,onSearch})=>(
+const Search = ({ search, onSearch }) => (
 
-    <>
-      <label htmlFor="search">Search: </label>
-      <input
-        id="search"
-        type="text"
-        value={search}
-        onChange={onSearch}
-      />
-    </>
-  );
+  <>
+    <label htmlFor="search">Search: </label>
+    <input
+      id="search"
+      type="text"
+      value={search}
+      onChange={onSearch}
+    />
+  </>
+);
 
 
 ////////////////
-const List = ({ list,onRemoveItem }) => (
+const List = ({ list, onRemoveItem }) => (
   <ul>
     {list.map((item) => (
       <Item key={item.objectID}
-       item={item}
+        item={item}
         onRemoveItem={onRemoveItem}
-        />
+      />
     ))}
   </ul>
 )
@@ -177,26 +205,12 @@ const Item = ({ item, onRemoveItem }) => (
     <span>{item.num_comments}</span>
     <span>{item.points}</span>
     <span>
-       <button type="button" onClick={() => onRemoveItem(item)}>
+      <button type="button" onClick={() => onRemoveItem(item)}>
         Dismiss
 
       </button>
 
     </span>
   </li>
-    )
- 
-
-
- 
-
-
-
-
-
-
-
-
- 
-
+)
 export default App;
