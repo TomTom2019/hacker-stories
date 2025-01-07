@@ -21,7 +21,7 @@ const list = [
 ];
 
 function App() {
-  console.log('App renders')
+ 
   const stories = [
     {
       title: 'React',
@@ -29,20 +29,26 @@ function App() {
       author: 'Jordan Walke',
       num_comments: 3,
       points: 4,
-      objectID:0,
+      objectID: 0,
     },
-   {
-     title: 'Redux',
-     url: 'https://redux.js.org/',
-     author: 'Dan Abramov, Andrew Clark',
-     num_comments: 2,
-     points: 5,
-     objectID:1,
-   },
+    {
+      title: 'Redux',
+      url: 'https://redux.js.org/',
+      author: 'Dan Abramov, Andrew Clark',
+      num_comments: 2,
+      points: 5,
+      objectID: 1,
+    },
   ]
 
 
+  // A
+  const handleSearch = (event) => {
+    // D
+    console.log(event.target.value);
 
+
+  };
 
 
 
@@ -50,7 +56,10 @@ function App() {
     <div>
       <h1>My Hacker Stories</h1>
 
-      <Search />
+      {/* // B */}
+      <Search onSearch={handleSearch} />
+
+     
 
       <hr />
 
@@ -61,13 +70,17 @@ function App() {
 
 
 //// SEARCH
-const Search = () =>{
- const [searchTerm, setSearchTerm]= React.useState('')
+const Search = (props) => {
+  const [searchTerm, setSearchTerm] = React.useState('')
 
 
-   const handleChange = (event)=>{
+  const handleChange = (event) => {
     setSearchTerm(event.target.value) 
-   }
+  }
+
+  // C
+  props.onSearch(event);
+
 
   return (
     <div>
@@ -82,8 +95,8 @@ const Search = () =>{
 ////LIST
 const List = (props) => (
   <ul>
-   {props.list.map((item)=>(
-       <Item key={item.objectID} item={item} />
+    {props.list.map((item) => (
+      <Item key={item.objectID} item={item} />
     ))} 
   </ul>
 );
